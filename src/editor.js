@@ -24,8 +24,7 @@ export function initEditor({ run, hush, onError }) {
     checkBrackets(editor);
   });
 
-  editor.setValue(`
-osc(10, 0.1, 1.2)
+  editor.setValue(`osc(10, 0.1, 1.2)
     .rotate(0.1)
     .out()
 `);

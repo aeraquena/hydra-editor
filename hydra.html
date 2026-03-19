@@ -34,13 +34,11 @@ ${event.data.code}
             let line = null;
 
             if (e.stack) {
-              console.log("this is e.stack", e.stack);
               // Match our fake filename
               const match = e.stack.match(/hydra-livecode\.js:(\d+)/);
               if (match) {
                 // subtract wrapper offset (VERY IMPORTANT)
                 line = Number(match[1]) - 1;
-                console.log("line: ", line);
               }
             }
 
