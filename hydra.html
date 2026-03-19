@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body style="margin: 0; overflow: hidden; background: black">
+    <script type="module">
+      import Hydra from "hydra-synth";
+
+      const hydra = new Hydra({
+        detectAudio: false,
+      });
+
+      // expose Hydra functions globally
+      Object.assign(window, hydra.synth);
+
+      window.addEventListener("message", (event) => {
+        if (event.data.type === "eval") {
+          try {
+            new Function(event.data.code)();
+          } catch (e) {
+            parent.postMessage(
+              {
+                type: "error",
+                message: e.message,
+                stack: e.stack,
+              },
+              "*",
+            );
+          }
+        }
+
+        if (event.data.type === "hush") {
+          hydra.hush();
+        }
+      });
+    </script>
+  </body>
+</html>
