@@ -48,6 +48,10 @@ iframe {
   padding-right: 4px;
 }
 
+.CodeMirror-selected {
+  background-color: #00ff00 !important; /* Your desired selection background color */
+}
+
 .cm-s-material .CodeMirror-gutters {
   background: transparent !important;
 }
