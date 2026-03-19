@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hydra Editor</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: black;
+      }
+
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0; /* 👈 behind */
+        pointer-events: none;
+        outline: none;
+        user-select: none;
+      }
+
+      .CodeMirror {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        background: rgba(0, 0, 0, 0.35);
+        font-size: 18px;
+        z-index: 10; /* 👈 above canvas */
+      }
+
+      #error {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        color: red;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 8px;
+      }
+
+      .error-line {
+        background: rgba(255, 0, 0, 0.25);
+      }
+
+      textarea {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Editor -->
+    <textarea id="editor"></textarea>
+
+    <!-- Error display -->
+    <div id="error"></div>
+
+    <!-- Vite entry -->
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
