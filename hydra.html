@@ -19,13 +19,13 @@
           try {
             // Wrap code to preserve line numbers
             const wrapped = `
-      try {
-${event.data.code}
-      } catch (e) {
-        throw e;
-      }
-      //# sourceURL=hydra-livecode.js
-    `;
+            try {
+      ${event.data.code}
+            } catch (e) {
+              throw e;
+            }
+            //# sourceURL=hydra-livecode.js
+          `;
 
             eval(wrapped);
           } catch (e) {
@@ -56,7 +56,49 @@ ${event.data.code}
         if (event.data.type === "hush") {
           hydra.hush();
         }
+
+        if (event.data.type === "init-midi") {
+          window.initMIDI();
+        }
       });
+
+      // --- MIDI SETUP ---
+      let cc = Array(128).fill(0.5);
+      window.cc = cc;
+
+      function getMIDIMessage(midiMessage) {
+        const [_, index, value] = midiMessage.data;
+        cc[index] = (value + 1) / 128.0;
+      }
+
+      function onMIDISuccess(midiAccess) {
+        for (const input of midiAccess.inputs.values()) {
+          input.onmidimessage = getMIDIMessage;
+        }
+        console.log("MIDI ready");
+      }
+
+      function onMIDIFailure() {
+        console.log("MIDI failed");
+      }
+
+      function getKnob(row, col) {
+        if (row === 1) {
+          return col + 12;
+        } else if (row === 2) {
+          return col + 28;
+        } else if (row === 3) {
+          return col + 48;
+        }
+      }
+      function getSlider(col) {
+        return col + 76;
+      }
+
+      // must be triggered by user gesture
+      window.initMIDI = () => {
+        navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+      };
     </script>
   </body>
 </html>

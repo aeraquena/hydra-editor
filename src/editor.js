@@ -118,6 +118,11 @@ export function initEditor({ run, hush, onError }) {
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       hush();
+    } else if (e.key === "Alt") {
+      // press alt key once to enable MIDI
+      document
+        .getElementById("hydra-frame")
+        .contentWindow.postMessage({ type: "init-midi" }, "*");
     }
   });
 
