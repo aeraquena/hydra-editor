@@ -1,31 +1,36 @@
-// Fix Hydra global issue
-window.global = window;
-
-import Hydra from "hydra-synth";
 import { initEditor } from "./editor.js";
 
 window.addEventListener("DOMContentLoaded", () => {
-  console.log("dom content loaded");
-  // Create canvas
-  const canvas = document.createElement("canvas");
-  canvas.setAttribute("tabindex", "-1");
-  canvas.style.outline = "none";
-  canvas.style.pointerEvents = "none";
+  const iframe = document.getElementById("hydra-frame");
 
-  document.body.appendChild(canvas);
+  function sendToHydra(code) {
+    iframe.contentWindow.postMessage(
+      {
+        type: "eval",
+        code,
+      },
+      "*",
+    );
+  }
 
-  const hydra = new Hydra({
-    canvas,
-    detectAudio: false,
+  function hush() {
+    iframe.contentWindow.postMessage(
+      {
+        type: "hush",
+      },
+      "*",
+    );
+  }
+
+  initEditor({
+    run: sendToHydra,
+    hush,
   });
 
-  Object.assign(window, hydra.synth);
-
-  // Expose globally (CRITICAL for osc(), etc.)
-  window.hydra = hydra;
-  window._hydra = hydra;
-  window.hush = () => hydra.hush();
-
-  // Now start editor
-  initEditor();
+  // receive errors from iframe
+  window.addEventListener("message", (event) => {
+    if (event.data.type === "error") {
+      console.error(event.data.message);
+    }
+  });
 });

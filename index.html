@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Hydra Editor</title>
+
     <style>
       body {
         margin: 0;
@@ -10,16 +11,14 @@
         background: black;
       }
 
-      canvas {
+      iframe {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 0; /* 👈 behind */
-        pointer-events: none;
-        outline: none;
-        user-select: none;
+        border: none;
+        z-index: 0;
       }
 
       .CodeMirror {
@@ -28,38 +27,30 @@
         left: 0;
         width: 100%;
         height: 100%;
-
         background: rgba(0, 0, 0, 0.35);
+        z-index: 10;
         font-size: 18px;
-        z-index: 10; /* 👈 above canvas */
+        opacity: 0.5;
       }
 
       #error {
         position: absolute;
         bottom: 20px;
         left: 20px;
-        color: red;
+        color: #ff6b6b;
         background: rgba(0, 0, 0, 0.6);
         padding: 8px;
-      }
-
-      .error-line {
-        background: rgba(255, 0, 0, 0.25);
-      }
-
-      textarea {
-        display: none;
+        z-index: 20;
       }
     </style>
   </head>
-  <body>
-    <!-- Editor -->
-    <textarea id="editor"></textarea>
 
-    <!-- Error display -->
+  <body>
+    <iframe id="hydra-frame" src="/hydra.html"></iframe>
+
+    <textarea id="editor"></textarea>
     <div id="error"></div>
 
-    <!-- Vite entry -->
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
