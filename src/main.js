@@ -22,15 +22,20 @@ window.addEventListener("DOMContentLoaded", () => {
     );
   }
 
+  let onErrorCallback = null;
+
   initEditor({
     run: sendToHydra,
     hush,
+    onError: (cb) => {
+      onErrorCallback = cb;
+    },
   });
 
   // receive errors from iframe
   window.addEventListener("message", (event) => {
-    if (event.data.type === "error") {
-      console.error(event.data.message);
+    if (event.data.type === "error" && onErrorCallback) {
+      onErrorCallback(event.data);
     }
   });
 });

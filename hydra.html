@@ -17,13 +17,37 @@
       window.addEventListener("message", (event) => {
         if (event.data.type === "eval") {
           try {
-            new Function(event.data.code)();
+            // Wrap code to preserve line numbers
+            const wrapped = `
+      try {
+${event.data.code}
+      } catch (e) {
+        throw e;
+      }
+      //# sourceURL=hydra-livecode.js
+    `;
+
+            eval(wrapped);
           } catch (e) {
+            console.error(e);
+
+            let line = null;
+
+            if (e.stack) {
+              console.log("this is e.stack", e.stack);
+              // Match our fake filename
+              const match = e.stack.match(/hydra-livecode\\.js:(\\d+):(\\d+)/);
+              if (match) {
+                // subtract wrapper offset (VERY IMPORTANT)
+                line = Number(match[1]) - 2;
+              }
+            }
+
             parent.postMessage(
               {
                 type: "error",
                 message: e.message,
-                stack: e.stack,
+                line,
               },
               "*",
             );

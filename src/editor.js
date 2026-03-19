@@ -6,7 +6,7 @@ import "codemirror/addon/edit/matchbrackets.js";
 import "codemirror/addon/edit/closebrackets.js";
 import "codemirror/theme/material.css";
 
-export function initEditor({ run, hush }) {
+export function initEditor({ run, hush, onError }) {
   const textarea = document.getElementById("editor");
   const errorDiv = document.getElementById("error");
 
@@ -30,8 +30,25 @@ osc(10, 0.1, 1.2)
   }
 
   function runCode() {
+    clearErrors();
     const code = editor.getSelection() || editor.getValue();
     evaluateCode(code);
+  }
+
+  function clearErrors() {
+    editor.eachLine((line) => {
+      editor.removeLineClass(line, "background", "error-line");
+    });
+    errorDiv.textContent = "";
+  }
+
+  function showError({ message, line }) {
+    errorDiv.textContent =
+      line != null ? `Line ${line + 1}: ${message}` : message;
+
+    if (line != null) {
+      editor.addLineClass(line, "background", "error-line");
+    }
   }
 
   editor.setOption("extraKeys", {
@@ -46,4 +63,6 @@ osc(10, 0.1, 1.2)
   });
 
   editor.focus();
+
+  onError(showError);
 }
