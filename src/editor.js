@@ -24,9 +24,7 @@ export function initEditor({ run, hush, onError }) {
     checkBrackets(editor);
   });
 
-  editor.setValue(`shape(3)
-    .out()
-`);
+  editor.setValue(``);
 
   function evaluateCode(code) {
     errorDiv.textContent = "";
