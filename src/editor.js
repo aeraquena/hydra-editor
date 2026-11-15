@@ -26,15 +26,46 @@ export function initEditor({ run, hush, onError }) {
 
   editor.setValue(``);
 
-  function evaluateCode(code) {
+  // line in the editor where the last evaluated code starts,
+  // so error line numbers can be mapped back to the editor
+  let evalLineOffset = 0;
+
+  function evaluateCode(code, lineOffset = 0) {
     errorDiv.textContent = "";
+    evalLineOffset = lineOffset;
     run(code);
   }
 
   function runCode() {
     clearErrors();
-    const code = editor.getSelection() || editor.getValue();
-    evaluateCode(code);
+    if (editor.somethingSelected()) {
+      evaluateCode(editor.getSelection(), editor.getCursor("from").line);
+    } else {
+      evaluateCode(editor.getValue(), 0);
+    }
+  }
+
+  // evaluate the block of non-blank lines around the cursor (like Hydra's alt+enter)
+  function runBlock() {
+    clearErrors();
+    const isBlank = (n) => editor.getLine(n).trim() === "";
+    const cursorLine = editor.getCursor().line;
+    if (isBlank(cursorLine)) return;
+
+    let start = cursorLine;
+    let end = cursorLine;
+    while (start > editor.firstLine() && !isBlank(start - 1)) start--;
+    while (end < editor.lastLine() && !isBlank(end + 1)) end++;
+
+    const from = { line: start, ch: 0 };
+    const to = { line: end, ch: editor.getLine(end).length };
+    flash(from, to);
+    evaluateCode(editor.getRange(from, to), start);
+  }
+
+  function flash(from, to) {
+    const marker = editor.markText(from, to, { className: "cm-eval-flash" });
+    setTimeout(() => marker.clear(), 200);
   }
 
   function clearErrors() {
@@ -45,6 +76,7 @@ export function initEditor({ run, hush, onError }) {
   }
 
   function showError({ message, line }) {
+    if (line != null) line += evalLineOffset;
     errorDiv.textContent =
       line != null ? `Line ${line + 1}: ${message}` : message;
 
@@ -110,6 +142,7 @@ export function initEditor({ run, hush, onError }) {
   editor.setOption("extraKeys", {
     "Cmd-Enter": runCode,
     "Ctrl-Enter": runCode,
+    "Alt-Enter": runBlock,
   });
 
   window.addEventListener("keydown", (e) => {
