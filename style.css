@@ -22,7 +22,7 @@ iframe {
   height: 100vh !important;
   background: transparent !important;
   z-index: 10;
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 600;
   overflow: hidden;
 }
@@ -44,7 +44,7 @@ iframe {
 }
 
 .CodeMirror-line span {
-  background: rgba(0, 0, 0, 0.5) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
   padding-left: 4px;
   padding-right: 4px;
 }
