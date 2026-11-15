@@ -1,19 +1,53 @@
+// images
+
 s0.initImage(
   "https://raw.githubusercontent.com/aeraquena/hydra-editor/main/media/ctg-magfest-logo-2025.png",
 );
 // s0.initImage("https://raw.githubusercontent.com/aeraquena/hydra-editor/main/media/ctg-pattern1.png")
 // s0.initImage("https://raw.githubusercontent.com/aeraquena/hydra-editor/main/media/legacy-disco-ball.png")
 
-// one transform, used for both the image and its mask
 const t = (x) => x.scale(0.7, () => Math.cos(time * 0.7), 1).rotate(0, 0.1);
+src(o0)
+  .layer(t(src(s0)).mask(t(shape(4, 1, 0.001)))) //.layer(t(src(s0)))
+  .out(o1);
 
-osc(10, 0.1, 1.2)
-  //.layer(t(src(s0)))
-  .layer(t(src(s0)).mask(t(shape(4, 1, 0.001))))
-  .out();
-hush();
+render(o0);
+render(o1);
+
+// 1
+// cellular and blobular
+
+speed = 0.3;
+shape(20, 0.2, 0.3)
+  .color(0.5, 0.8, 50)
+  .scale(() => Math.sin(time) + 1 * 2)
+  .repeat(() => Math.sin(time) * 10)
+  .modulateRotate(o0, () => cc[k(1, 1)])
+  //.scale(() => Math.sin(time) + 1 * 1.5)
+  .modulate(
+    noise(() => cc[k(1, 3)], 2),
+    () => cc[k(1, 2)],
+  )
+  .rotate(1, 0.2)
+  .luma(
+    () => cc[s(1)],
+    () => cc[s(2)],
+  )
+  .out(o0);
 
 // 2
+// target
+
+const rings = osc(40, 0, 0)
+  .kaleid(999)
+  .thresh(0.5, () => cc[k(1, 2)]);
+solid(1, 1, 1) // white
+  .layer(solid(1, 0, 0).mask(rings))
+  .scale(() => 1.5 + Math.sin(time * 0.8), height / width, 1)
+  .modulate(o0, () => cc[k(1, 1)])
+  .out();
+
+// 3
 // neon blocks
 
 speed = 0.75;
@@ -34,6 +68,29 @@ osc(10, 1, 300)
   .modulate(osc(0.1, 1))
   .scale(() => cc[k(1, 3)] * 0.5 + 0.5)
   .out();
+
+// 4
+// rotating blob
+
+noise(
+  () => cc[k(1, 1)] * 5,
+  0.1,
+  () => cc[k(1, 2)] * 7,
+)
+  .rotate(1, -1, -2)
+  .mask(shape(20))
+  .colorama(() => cc[k(1, 3)])
+  .modulateScale(o0)
+  .modulateScale(o0)
+  .blend(o0)
+  .blend(o0)
+  .blend(o0)
+  .blend(o0)
+  .luma(
+    () => cc[s(1)],
+    () => cc[s(2)],
+  )
+  .out(o0);
 
 // 5
 // glitch river
