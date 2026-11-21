@@ -6,6 +6,9 @@ import "codemirror/addon/edit/matchbrackets.js";
 import "codemirror/addon/edit/closebrackets.js";
 import "codemirror/theme/material.css";
 
+// preload a sketch into the editor (?raw imports the file as a string)
+import initialSketch from "../sketches/close-to-good.js?raw";
+
 export function initEditor({ run, hush, onError }) {
   const textarea = document.getElementById("editor");
   const errorDiv = document.getElementById("error");
@@ -24,7 +27,7 @@ export function initEditor({ run, hush, onError }) {
     checkBrackets(editor);
   });
 
-  editor.setValue(``);
+  editor.setValue(initialSketch);
 
   // line in the editor where the last evaluated code starts,
   // so error line numbers can be mapped back to the editor

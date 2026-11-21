@@ -1,10 +1,15 @@
+// Close to Good
+
 // images
 
+// logo
 s0.initImage(
   "https://raw.githubusercontent.com/aeraquena/hydra-editor/main/media/ctg-magfest-logo-2025.png",
 );
-// s0.initImage("https://raw.githubusercontent.com/aeraquena/hydra-editor/main/media/ctg-pattern1.png")
-// s0.initImage("https://raw.githubusercontent.com/aeraquena/hydra-editor/main/media/legacy-disco-ball.png")
+// sphere
+//s0.initImage("https://raw.githubusercontent.com/aeraquena/hydra-editor/main/media/legacy-disco-ball.png")
+// pattern
+//s0.initImage("https://raw.githubusercontent.com/aeraquena/hydra-editor/main/media/ctg-pattern1.png")
 
 const t = (x) => x.scale(0.7, () => Math.cos(time * 0.7), 1).rotate(0, 0.1);
 src(o0)
@@ -12,6 +17,7 @@ src(o0)
   .out(o1);
 
 render(o0);
+
 render(o1);
 
 // 1
@@ -23,35 +29,30 @@ shape(20, 0.2, 0.3)
   .scale(() => Math.sin(time) + 1 * 2)
   .repeat(() => Math.sin(time) * 10)
   .modulateRotate(o0, () => cc[k(1, 1)])
-  //.scale(() => Math.sin(time) + 1 * 1.5)
+  .scale(() => cc[k(1, 2)] * 10)
   .modulate(
     noise(() => cc[k(1, 3)], 2),
-    () => cc[k(1, 2)],
+    () => cc[k(1, 4)],
   )
-  .rotate(1, 0.2)
-  .luma(
-    () => cc[s(1)],
-    () => cc[s(2)],
-  )
+  .rotate(() => cc[k(1, 5)], 0.2)
   .out(o0);
 
 // 2
 // target
 
-const rings = osc(40, 0, 0)
+const rings = osc(() => cc[k(1, 1)] * 40, 0, 0)
   .kaleid(999)
-  .thresh(0.5, () => cc[k(1, 2)]);
-solid(1, 1, 1) // white
+  .thresh(0.5);
+solid(1, 1, 1)
   .layer(solid(1, 0, 0).mask(rings))
   .scale(() => 1.5 + Math.sin(time * 0.8), height / width, 1)
-  .modulate(o0, () => cc[k(1, 1)])
+  .modulate(o0, () => cc[k(1, 2)])
   .out();
 
 // 3
 // neon blocks
 
 speed = 0.75;
-
 osc(10, 1, 300)
   .color(0.9, 0.7, 0.8)
   .diff(
@@ -80,6 +81,7 @@ noise(
   .rotate(1, -1, -2)
   .mask(shape(20))
   .colorama(() => cc[k(1, 3)])
+  .scale(() => cc[k(1, 4)] * 4)
   .modulateScale(o0)
   .modulateScale(o0)
   .blend(o0)
@@ -190,17 +192,19 @@ shape([4, 5, 6].fast(0.1).smooth(1), 0.000001, [0.2, 0.7].smooth(1))
 // 8
 // noisy neon port
 
+speed = 0.75;
 osc(5, 0.9, 0.001)
   .kaleid([3, 4, 5, 7, 8, 9, 10].fast(0.1))
   .color(
     () => cc[k(2, 1)],
     () => cc[k(2, 2)],
   )
-  .colorama(() => cc[k(1, 1)])
+  .colorama(() => cc[k(2, 3)])
   .rotate(0.009, () => Math.sin(time) * -0.001)
   .modulateRotate(o0, () => Math.sin(time) * 0.003)
+  .modulate(o0, () => cc[k(1, 1)])
   .modulate(o0, () => cc[k(1, 2)])
-  .scale(() => cc[k(1, 3)])
+  .scale(() => cc[k(1, 3)] * 2)
   .luma(
     () => cc[s(1)],
     () => cc[s(2)],
